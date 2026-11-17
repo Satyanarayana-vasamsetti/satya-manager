@@ -92,12 +92,23 @@ export function AddBooking() {
       const advance = Number(advanceAmount) || 0;
       const remaining = total - advance;
       
+      const initialHistory = advance > 0 ? [
+        {
+          id: 'initial-' + Date.now(),
+          amount: advance,
+          date: new Date().toISOString(),
+          method: 'Advance',
+          note: 'Initial Booking Advance'
+        }
+      ] : [];
+
       const { error: paymentError } = await supabase.from('payments').insert({
         booking_id: booking.id,
         total_amount: total,
         advance_amount: advance,
         remaining_amount: remaining,
-        payment_status: remaining === 0 ? 'Paid' : advance > 0 ? 'Partial' : 'Pending'
+        payment_status: remaining === 0 ? 'Paid' : advance > 0 ? 'Partial' : 'Pending',
+        payment_method: initialHistory.length > 0 ? JSON.stringify(initialHistory) : null
       });
       if (paymentError) throw paymentError;
 

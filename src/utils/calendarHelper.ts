@@ -1,7 +1,8 @@
 export function getGoogleCalendarUrl(booking: any) {
-  const text = encodeURIComponent(`${booking.event_name}`);
+  const eventTitle = booking.event_name || booking.event_type || 'Makeover Appointment';
+  const text = encodeURIComponent(eventTitle);
   
-  let detailsText = `Client: ${booking.client?.name || 'Unknown'}\n`;
+  let detailsText = `Client: ${booking.client?.name || 'Client'}\n`;
   if (booking.client?.phone) detailsText += `Phone: ${booking.client.phone}\n`;
   if (booking.reporting_time) detailsText += `Reporting Time: ${booking.reporting_time}\n`;
   if (booking.services && booking.services.length > 0) {
@@ -11,14 +12,12 @@ export function getGoogleCalendarUrl(booking: any) {
   const details = encodeURIComponent(detailsText);
   const location = encodeURIComponent(booking.location || '');
   
-  // Create Date objects in local time, then convert to UTC string format required by Google Calendar
-  // Format: YYYYMMDDTHHmmssZ
-  
-  let startD = new Date(booking.event_date);
-  if (booking.reporting_time) {
+  const eventDateStr = booking.event_date || new Date().toISOString().split('T')[0];
+  const startD = new Date(eventDateStr);
+  if (booking.reporting_time && typeof booking.reporting_time === 'string' && booking.reporting_time.includes(':')) {
     const [hours, minutes] = booking.reporting_time.split(':');
     startD.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
-  } else if (booking.event_time) {
+  } else if (booking.event_time && typeof booking.event_time === 'string' && booking.event_time.includes(':')) {
     const [hours, minutes] = booking.event_time.split(':');
     startD.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
   } else {
@@ -26,10 +25,14 @@ export function getGoogleCalendarUrl(booking: any) {
   }
 
   // End time is 2 hours after start time by default
-  let endD = new Date(startD.getTime() + 2 * 60 * 60 * 1000);
+  const endD = new Date(startD.getTime() + 2 * 60 * 60 * 1000);
 
   const formatGoogleDate = (d: Date) => {
-    return d.toISOString().replace(/-|:|\.\d\d\d/g, '');
+    try {
+      return d.toISOString().replace(/-|:|\.\d\d\d/g, '');
+    } catch {
+      return '';
+    }
   };
 
   const dates = `${formatGoogleDate(startD)}/${formatGoogleDate(endD)}`;

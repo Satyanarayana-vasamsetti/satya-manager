@@ -5,6 +5,7 @@ export interface Client {
   whatsapp: string | null;
   instagram: string | null;
   created_at: string;
+  bookings?: Booking[];
 }
 
 export interface Lead {
@@ -54,4 +55,5 @@ export interface Payment {
   remaining_amount: number;
   payment_status: string;
   payment_method: string | null;
+  created_at?: string;
 }
