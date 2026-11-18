@@ -193,9 +193,23 @@ export function Calendar() {
                       </div>
                       
                       {/* Event Type & Name */}
-                      <p className="text-rosegold-600 font-bold text-sm mb-3">
-                        {booking.event_type} {booking.event_name && `• ${booking.event_name}`}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                        {booking.event_type ? (
+                          booking.event_type.split(',').map((t, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs font-bold px-2 py-0.5 rounded-lg bg-rosegold-50 text-rosegold-700 border border-rosegold-200"
+                            >
+                              {t.trim()}
+                            </span>
+                          ))
+                        ) : null}
+                        {booking.event_name && (
+                          <span className="text-xs font-semibold text-gray-700">
+                            • {booking.event_name}
+                          </span>
+                        )}
+                      </div>
                       
                       {/* Times & Location */}
                       <div className="flex flex-col gap-1.5 text-xs text-gray-600">

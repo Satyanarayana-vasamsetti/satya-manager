@@ -406,9 +406,23 @@ export function Dashboard() {
                         </h4>
                         <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
                       </div>
-                      <p className="text-rosegold-600 font-semibold text-xs mt-0.5">
-                        {booking.event_type} {booking.event_name ? `• ${booking.event_name}` : ''}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-1 mt-1">
+                        {booking.event_type ? (
+                          booking.event_type.split(',').map((t, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-rosegold-50 text-rosegold-700 border border-rosegold-200"
+                            >
+                              {t.trim()}
+                            </span>
+                          ))
+                        ) : null}
+                        {booking.event_name && (
+                          <span className="text-[11px] font-medium text-gray-600 truncate">
+                            • {booking.event_name}
+                          </span>
+                        )}
+                      </div>
                     </Link>
 
                     {booking.client?.phone && (

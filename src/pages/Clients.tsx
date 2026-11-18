@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Client } from '../types';
-import { Search, Phone, MessageCircle, Trash2, Calendar, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { Search, Phone, MessageCircle, Trash2, Calendar, ChevronRight, ArrowUpDown, Edit2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 
@@ -179,13 +179,22 @@ export function Clients() {
                     </div>
                   </Link>
 
-                  <button 
-                    onClick={() => handleDelete(client.id, client.name)}
-                    className="text-gray-300 hover:text-red-500 active:bg-red-50 p-2 rounded-xl transition-colors ml-2"
-                    title="Delete Client"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex items-center gap-1 ml-2">
+                    <Link
+                      to={`/clients/${client.id}?edit=true`}
+                      className="text-gray-400 hover:text-rosegold-600 p-2 rounded-xl hover:bg-rosegold-50 transition-colors"
+                      title="Edit Client"
+                    >
+                      <Edit2 size={16} />
+                    </Link>
+                    <button 
+                      onClick={() => handleDelete(client.id, client.name)}
+                      className="text-gray-300 hover:text-red-500 active:bg-red-50 p-2 rounded-xl transition-colors"
+                      title="Delete Client"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Badges / Summary Info */}
