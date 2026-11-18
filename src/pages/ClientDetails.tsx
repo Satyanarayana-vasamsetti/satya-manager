@@ -1100,33 +1100,54 @@ export function ClientDetails() {
       {/* MODAL 1: PERFECT TABBED EDIT CLIENT MODAL                */}
       {/* ======================================================== */}
       {isEditClientModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-gray-100 max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+          <div className="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-gray-100 h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[88vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
             {/* Mobile Sheet Drag Handle */}
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0" />
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2 sm:hidden shrink-0" />
 
-            {/* Modal Header */}
-            <div className="flex justify-between items-center px-5 sm:px-6 py-3.5 border-b border-gray-100 shrink-0">
-              <div>
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <Edit2 size={16} className="text-rosegold-600" /> Edit Client & Bookings
-                </h3>
-                <p className="text-xs text-gray-500">Update client profile, package pricing, and all functions</p>
+            {/* Modal Header with Quick-Save Button for Mobile */}
+            <div className="flex justify-between items-center px-4 sm:px-6 py-2.5 sm:py-3.5 border-b border-gray-100 shrink-0 bg-white">
+              <div className="flex items-center gap-2 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setIsEditClientModalOpen(false)}
+                  className="p-1.5 -ml-1 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  title="Close"
+                >
+                  <X size={20} />
+                </button>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5 truncate">
+                    <Edit2 size={15} className="text-rosegold-600 shrink-0" /> Edit Client & Events
+                  </h3>
+                  <p className="text-[11px] text-gray-400 hidden sm:block truncate">Update client profile, package pricing, and functions</p>
+                </div>
               </div>
+
+              {/* Quick Save in Header - ALWAYS visible on mobile at top! */}
               <button
-                onClick={() => setIsEditClientModalOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                type="button"
+                onClick={handleSaveClient}
+                disabled={isSavingClient}
+                className="px-3.5 py-1.5 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all disabled:opacity-60 flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 ml-2"
               >
-                <X size={18} />
+                {isSavingClient ? (
+                  <span>Saving...</span>
+                ) : (
+                  <>
+                    <Check size={14} className="stroke-[3]" />
+                    <span>Save</span>
+                  </>
+                )}
               </button>
             </div>
 
             {/* Segmented Tab Navigation */}
-            <div className="flex bg-gray-100/90 p-1 rounded-2xl gap-1 mx-4 sm:mx-6 my-2.5 shrink-0 text-xs font-bold">
+            <div className="flex bg-gray-100/90 p-1 rounded-2xl gap-1 mx-4 sm:mx-6 my-2 shrink-0 text-xs font-bold">
               <button
                 type="button"
                 onClick={() => setEditModalTab('profile')}
-                className={`flex-1 py-2 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   editModalTab === 'profile'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-500 hover:text-gray-900'
@@ -1138,7 +1159,7 @@ export function ClientDetails() {
               <button
                 type="button"
                 onClick={() => setEditModalTab('billing')}
-                className={`flex-1 py-2 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   editModalTab === 'billing'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-500 hover:text-gray-900'
@@ -1150,7 +1171,7 @@ export function ClientDetails() {
               <button
                 type="button"
                 onClick={() => setEditModalTab('events')}
-                className={`flex-1 py-2 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-2 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   editModalTab === 'events'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-500 hover:text-gray-900'
@@ -1414,7 +1435,7 @@ export function ClientDetails() {
                                 placeholder="e.g. Hotel Novotel, Banjara Hills, Hyderabad"
                                 value={ev.location}
                                 onChange={(e) => updateEditEventField(ev.id, 'location', e.target.value)}
-                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs outline-none focus:bg-white focus:ring-2 focus:ring-rosegold-500"
+                                className="w-full px-3 py-2.5 sm:py-2 bg-gray-50 border border-gray-200 rounded-xl text-base sm:text-xs outline-none focus:bg-white focus:ring-2 focus:ring-rosegold-500"
                               />
                             </div>
 
@@ -1469,8 +1490,8 @@ export function ClientDetails() {
                 )}
               </div>
 
-              {/* Modal Footer (Sticky at bottom on Mobile) */}
-              <div className="bg-white/95 backdrop-blur-xs border-t border-gray-100 px-4 sm:px-6 py-3 flex gap-2.5 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              {/* Modal Footer (Always visible above mobile nav & home indicator) */}
+              <div className="bg-white border-t border-gray-100 px-4 sm:px-6 py-3.5 flex gap-2.5 shrink-0 pb-[max(1.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
                 <button
                   type="button"
                   onClick={() => setIsEditClientModalOpen(false)}
@@ -1481,7 +1502,7 @@ export function ClientDetails() {
                 <button
                   type="submit"
                   disabled={isSavingClient}
-                  className="flex-1 py-3 bg-gradient-to-r from-rosegold-600 to-rosegold-500 hover:from-rosegold-700 hover:to-rosegold-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="flex-2 py-3 bg-gradient-to-r from-rosegold-600 to-rosegold-500 hover:from-rosegold-700 hover:to-rosegold-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                 >
                   {isSavingClient ? (
                     <span>Saving All Changes...</span>
@@ -1502,23 +1523,37 @@ export function ClientDetails() {
       {/* MODAL 2: Add Event / Function to this Client Modal       */}
       {/* ======================================================== */}
       {isAddEventModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[88vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
             {/* Mobile Sheet Drag Handle */}
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0" />
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2 sm:hidden shrink-0" />
 
-            <div className="flex justify-between items-center px-5 sm:px-6 py-3.5 border-b border-gray-100 shrink-0">
-              <div>
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <PlusCircle size={17} className="text-rosegold-600" /> Add Event for {client.name}
-                </h3>
-                <p className="text-xs text-gray-500">Add another function with different date & location</p>
+            <div className="flex justify-between items-center px-4 sm:px-6 py-2.5 sm:py-3.5 border-b border-gray-100 shrink-0 bg-white">
+              <div className="flex items-center gap-2 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAddEventModalOpen(false)}
+                  className="p-1.5 -ml-1 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  title="Close"
+                >
+                  <X size={20} />
+                </button>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5 truncate">
+                    <PlusCircle size={16} className="text-rosegold-600 shrink-0" /> Add Function
+                  </h3>
+                  <p className="text-[11px] text-gray-400 hidden sm:block truncate">Add event for {client.name}</p>
+                </div>
               </div>
+
+              {/* Quick Save in Header */}
               <button
-                onClick={() => setIsAddEventModalOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                type="button"
+                onClick={handleSaveNewEvent}
+                disabled={isSavingNewEvent}
+                className="px-3.5 py-1.5 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all disabled:opacity-60 flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 ml-2"
               >
-                <X size={18} />
+                {isSavingNewEvent ? 'Saving...' : 'Save'}
               </button>
             </div>
 
@@ -1641,7 +1676,7 @@ export function ClientDetails() {
                 </div>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-xs border-t border-gray-100 px-5 sm:px-6 py-3 flex gap-2.5 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <div className="bg-white border-t border-gray-100 px-5 sm:px-6 py-3.5 flex gap-2.5 shrink-0 pb-[max(1.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
                 <button
                   type="button"
                   onClick={() => setIsAddEventModalOpen(false)}
@@ -1652,7 +1687,7 @@ export function ClientDetails() {
                 <button
                   type="submit"
                   disabled={isSavingNewEvent}
-                  className="flex-1 py-3 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="flex-2 py-3 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                 >
                   {isSavingNewEvent ? 'Saving Event...' : 'Add Event to Client'}
                 </button>
@@ -1666,23 +1701,37 @@ export function ClientDetails() {
       {/* MODAL 3: Individual Edit Existing Event Modal            */}
       {/* ======================================================== */}
       {editingBooking && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl h-[90dvh] max-h-[90dvh] sm:h-auto sm:max-h-[88vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-none sm:fade-in sm:zoom-in-95 duration-200">
             {/* Mobile Sheet Drag Handle */}
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2.5 sm:hidden shrink-0" />
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto my-2 sm:hidden shrink-0" />
 
-            <div className="flex justify-between items-center px-5 sm:px-6 py-3.5 border-b border-gray-100 shrink-0">
-              <div>
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <Edit2 size={16} className="text-rosegold-600" /> Edit Event Details
-                </h3>
-                <p className="text-xs text-gray-500">Update event types, date, time, venue, or status</p>
+            <div className="flex justify-between items-center px-4 sm:px-6 py-2.5 sm:py-3.5 border-b border-gray-100 shrink-0 bg-white">
+              <div className="flex items-center gap-2 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setEditingBooking(null)}
+                  className="p-1.5 -ml-1 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  title="Close"
+                >
+                  <X size={20} />
+                </button>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5 truncate">
+                    <Edit2 size={15} className="text-rosegold-600 shrink-0" /> Edit Event
+                  </h3>
+                  <p className="text-[11px] text-gray-400 hidden sm:block truncate">Update event types, date, time & venue</p>
+                </div>
               </div>
+
+              {/* Quick Save in Header */}
               <button
-                onClick={() => setEditingBooking(null)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                type="button"
+                onClick={handleSaveEditEvent}
+                disabled={isSavingEditEvent}
+                className="px-3.5 py-1.5 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all disabled:opacity-60 flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 ml-2"
               >
-                <X size={18} />
+                {isSavingEditEvent ? 'Saving...' : 'Save'}
               </button>
             </div>
 
@@ -1804,7 +1853,7 @@ export function ClientDetails() {
                 </div>
               </div>
 
-              <div className="bg-white/95 backdrop-blur-xs border-t border-gray-100 px-5 sm:px-6 py-3 flex gap-2.5 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <div className="bg-white border-t border-gray-100 px-5 sm:px-6 py-3.5 flex gap-2.5 shrink-0 pb-[max(1.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
                 <button
                   type="button"
                   onClick={() => setEditingBooking(null)}
@@ -1815,7 +1864,7 @@ export function ClientDetails() {
                 <button
                   type="submit"
                   disabled={isSavingEditEvent}
-                  className="flex-1 py-3 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors disabled:opacity-60 cursor-pointer"
+                  className="flex-2 py-3 bg-rosegold-600 hover:bg-rosegold-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-colors disabled:opacity-60 cursor-pointer active:scale-98"
                 >
                   {isSavingEditEvent ? 'Saving...' : 'Update Event'}
                 </button>

@@ -23,7 +23,7 @@ export function Layout() {
       </main>
 
       {/* Bottom Navigation for Mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-rosegold-100 px-4 py-2 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-rosegold-100 px-4 py-2 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <div className="flex justify-between items-center max-w-md mx-auto">
           {navItems.map((item) => (
             <NavLink
